@@ -75,6 +75,12 @@
       ]
     },
     {
+      "group": "Forecaster",
+      "pages": [
+        "api-reference/forecaster/train/create"
+      ]
+    },
+    {
       "group": "Endpoint Examples",
       "pages": [
         "api-reference/endpoint/get",
