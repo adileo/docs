@@ -1,0 +1,26 @@
+---
+title: 'Models'
+description: 'Models supported by Omnifuel'
+---
+
+At Omnifuel, we leverage LightGBM as our primary forecasting model due to its exceptional performance with retail data. LightGBM excels in handling large datasets with high-dimensional features and complex relationships, making it ideal for retail scenarios where demand fluctuates and product hierarchies exist. Its gradient boosting mechanism ensures robust, scalable predictions across varying aggregation levels, from individual stores to broader market trends. The efficiency and accuracy provided by LightGBM make it the best choice for improving sales predictions and optimizing inventory management.
+
+## Why LightGBM?
+
+LightGBM stands out for its efficiency in training and prediction. Retail data typically includes vast amounts of historical sales, promotions, and seasonal factors. With LightGBM’s ability to handle missing data, categorical variables, and complex feature interactions, it adapts perfectly to the ever-changing retail environment. This allows Omnifuel to deliver more accurate and faster predictions compared to traditional models, optimizing operations and boosting decision-making accuracy.
+
+## Handling Hierarchical Data
+
+Retail data is inherently hierarchical, involving multiple layers like stores, products, and regions. LightGBM efficiently manages these hierarchical structures by treating them as part of its decision tree-based structure. It can scale across multiple aggregation levels, ensuring coherent forecasts from the most granular (store-product) to the most aggregated levels. This adaptability is key for retailers seeking insights at every level of their business without compromising on forecast accuracy.
+
+## Scalability and Performance
+
+In retail, large datasets are common, and the ability to scale is essential. LightGBM is designed to handle large datasets by utilizing both multi-threading and efficient memory usage, making it a natural fit for retail applications where millions of transactions and interactions need to be processed rapidly. Omnifuel leverages this scalability to handle ever-growing data volumes without compromising on speed or precision, ensuring timely, actionable insights.
+
+## Feature Enginering
+
+One of LightGBM’s strengths is its flexibility with feature engineering. In retail forecasting, input features such as prices, promotions, holidays, and store-level attributes play crucial roles in predicting demand. LightGBM excels in managing high-dimensional feature sets, enabling Omnifuel to automatically learn from complex retail patterns. This ensures that forecasts consider all relevant variables, leading to better optimization of stock levels, promotions, and pricing strategies.
+
+## Model Interpretability
+
+Despite being a machine learning model, LightGBM offers a high degree of interpretability, allowing us to explain forecasts and drive confidence in decision-making. Retailers often need to understand which factors drive demand and how they influence forecasts. LightGBM’s feature importance scores and model interpretability tools empower users to gain insights into the most critical predictors, helping optimize everything from store staffing to product assortment planning.
