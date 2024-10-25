@@ -8,7 +8,7 @@
   },
   "servers": [
     {
-      "url": "https://forecaster.api.omnifuel.io"
+      "url": "https://api.omnifuel.ai/v1"
     }
   ],
   "security": [
@@ -18,46 +18,8 @@
   ],
 
   "paths": {
-    "/train": {
-      "get": {
-        "description": "Train the model",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
+    "/forecaster": {
+     
       "post": {
         "description": "Creates a new plant in the store",
         "requestBody": {
@@ -95,8 +57,42 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
+    "/forecaster/{id}": {
+      "get": {
+        "description": "Deletes a single plant based on the ID supplied",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of plant to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Plant deleted",
+            "content": {}
+          },
+          "400": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/forecaster/{id}/forecast": {
+      "post": {
         "description": "Deletes a single plant based on the ID supplied",
         "parameters": [
           {
