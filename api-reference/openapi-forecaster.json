@@ -3,7 +3,6 @@
   "info": {
     "title": "Omnifuel Forecasting",
     "description": "The forecasting API",
-
     "version": "1.0.0"
   },
   "servers": [
@@ -13,43 +12,219 @@
   ],
   "security": [
     {
-      "api_key": []
+      "api_key": [],
+      "bearerAuth": []
     }
   ],
-
   "paths": {
     "/forecaster": {
-     
       "post": {
-        "description": "Creates a new plant in the store",
+        "summary": "Start a Forecaster training job",
+        "description": "Initiates a Forecaster training job with the specified dataset and model configuration parameters.",
         "requestBody": {
-          "description": "Plant to add to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "type": "object",
+                "properties": {
+                  "dataset_format": {
+                    "type": "string",
+                    "enum": [
+                      "csv",
+                      "parquet"
+                    ],
+                    "default": "csv"
+                  },
+                  "dataset": {
+                    "type": "string",
+                    "format": "url",
+                    "description": "URL of the dataset to be used for training",
+                    "default": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlWg_weIflYDrxnlAVx7pEaQHL2fgCuqjwswG0XdZGkakIFdCoBGgzH7JOy7qyPNFxs5T7YB4pjwPT/pub?output=csv"
+                  },
+                  "time_column": {
+                    "type": "string",
+                    "default": "time"
+                  },
+                  "target_columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": [
+                      "target"
+                    ]
+                  },
+                  "past_covariates": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  },
+                  "future_covariates": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  },
+                  "static_covariates": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  },
+                  "group_columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": [
+                      "group"
+                    ]
+                  },
+                  "holidays": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  },
+                  "datetime_attributes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  },
+                  "lags": {
+                    "oneOf": [
+                      {
+                        "type": "number",
+                        "minimum": 1
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        }
+                      }
+                    ],
+                    "default": 30
+                  },
+                  "lags_past_covariates": {
+                    "oneOf": [
+                      {
+                        "type": "number",
+                        "minimum": 1
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        }
+                      }
+                    ],
+                    "default": 7
+                  },
+                  "lags_future_covariates": {
+                    "type": "array",
+                    "items": {
+                      "type": "number",
+                      "minimum": 1
+                    }
+                  },
+                  "num_leaves": {
+                    "type": "number",
+                    "default": 50
+                  },
+                  "learning_rate": {
+                    "type": "number",
+                    "default": 0.05
+                  },
+                  "num_iterations": {
+                    "type": "number",
+                    "default": 200
+                  },
+                  "test_size": {
+                    "type": "number",
+                    "default": 0.2
+                  },
+                  "test_sample_over": {
+                    "type": "string",
+                    "enum": [
+                      "time",
+                      "groups"
+                    ],
+                    "default": "time"
+                  },
+                  "min_data_in_leaf": {
+                    "type": "number",
+                    "default": 20
+                  },
+                  "max_depth": {
+                    "type": "number",
+                    "default": -1
+                  },
+                  "max_bin": {
+                    "type": "number",
+                    "default": 255
+                  },
+                  "output_chunk_length": {
+                    "type": "number",
+                    "default": 1
+                  }
+                },
+                "required": [
+                  "dataset"
+                ]
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
-            "description": "plant response",
+            "description": "Training job started successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Training job started successfully",
+                    "id": "abc1234-5678-9101-1121-314151617181"
+                  }
                 }
               }
             }
           },
-          "400": {
-            "description": "unexpected error",
+          "500": {
+            "description": "Error starting the training job",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "boolean"
+                    }
+                  },
+                  "example": {
+                    "message": "Error starting training job",
+                    "error": true
+                  }
                 }
               }
             }
@@ -59,64 +234,197 @@
     },
     "/forecaster/{id}": {
       "get": {
-        "description": "Deletes a single plant based on the ID supplied",
+        "summary": "Get training job status",
+        "description": "Retrieves the status and details of a training job specified by its ID.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of plant to delete",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
+              "type": "string"
+            },
+            "description": "The ID of the training job to retrieve."
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "Training job details retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "trainingStartedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "trainingEndedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "example": {
+                    "id": "abc1234-5678-9101-1121-314151617181",
+                    "status": "InProgress",
+                    "createdAt": "2024-01-01T10:00:00Z",
+                    "trainingStartedAt": "2024-01-01T10:30:00Z",
+                    "trainingEndedAt": null
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Training job not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Training job with ID abc1234-5678-9101-1121-314151617181 not found."
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error retrieving the training job",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "boolean"
+                    }
+                  },
+                  "example": {
+                    "message": "Error retrieving training job",
+                    "error": true
+                  }
                 }
               }
             }
           }
         }
       }
-    }
-  },
-  "/forecaster/{id}/forecast": {
+    },
+    "/forecaster/{id}/forecast": {
       "post": {
-        "description": "Deletes a single plant based on the ID supplied",
+        "summary": "Generate forecast",
+        "description": "Invokes the endpoint to generate a forecast based on the trained model specified by its ID.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of plant to delete",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
+              "type": "string"
+            },
+            "description": "The ID of the trained model to be used for forecasting."
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "steps": {
+                    "type": "number",
+                    "description": "Number of forecast steps to predict."
+                  },
+                  "dataset": {
+                    "type": "string",
+                    "description": "Location of the dataset to be used for generating the forecast."
+                  },
+                  "dataset_format": {
+                    "type": "string",
+                    "enum": [
+                      "csv",
+                      "parquet"
+                    ],
+                    "default": "csv",
+                    "description": "Format of the dataset."
+                  }
+                },
+                "required": [
+                  "steps",
+                  "dataset"
+                ]
+              }
+            }
+          }
+        },
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "Forecast generated successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "string",
+                  "description": "The forecast data in JSON format."
+                },
+                "example": "[{\"step\":1,\"value\":123.45},{\"step\":2,\"value\":130.67}]"
+              }
+            }
+          },
+          "404": {
+            "description": "Model not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "example": {
+                    "message": "Model with ID abc1234-5678-9101-1121-314151617181 not found."
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error generating forecast",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "boolean"
+                    }
+                  },
+                  "example": {
+                    "message": "Error invoking forecast endpoint",
+                    "error": true
+                  }
                 }
               }
             }
@@ -126,58 +434,17 @@
     }
   },
   "components": {
-    "schemas": {
-      "Plant": {
-        "required": ["name"],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": ["id"],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
-        ]
-      },
-      "Error": {
-        "required": ["error", "message"],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
-        }
-      }
-    },
+    "schemas": {},
     "securitySchemes": {
       "api_key": {
         "type": "apiKey",
         "name": "x-api-key",
         "in": "header"
+      },
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }
